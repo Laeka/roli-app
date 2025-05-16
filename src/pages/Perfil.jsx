@@ -5,8 +5,7 @@ import { getProfileByUserId, updateProfile, uploadProfileImage } from '../api/pr
 import avatarDefault from '../assets/avatar-default.png';
 import Layout from '../containers/Layout';
 
-// Usar URL relativa para aprovechar el proxy
-const API_URL = '';
+const BASE_BACKEND_URL = import.meta.env.VITE_API_URL;
 
 const camposEditables = [
   { key: 'estadoCivil', label: 'Estado civil' },
@@ -130,7 +129,7 @@ const Perfil = () => {
           <div className="flex flex-col items-center mb-6">
             <div className="relative group">
               <img
-                src={imagen ? `http://localhost:5001/uploads/${imagen.split('/').pop()}` : avatarDefault}
+                src={imagen ? imagen : avatarDefault}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover mb-2 cursor-pointer border-2 border-green-400"
                 onClick={() => fileInputRef.current.click()}

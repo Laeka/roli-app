@@ -13,7 +13,7 @@ function RegisterPage() {
     nombres: '',
     apellidos: '',
     telefono: '',
-    correoElectronico: '',
+    email: '',
     estadoRegion: '',
     residencia: '',
     habitacion: '',
@@ -58,7 +58,7 @@ function RegisterPage() {
           <InputField label="Nombres" id="nombres" name="nombres" value={formData.nombres} onChange={handleChange} required />
           <InputField label="Apellidos" id="apellidos" name="apellidos" value={formData.apellidos} onChange={handleChange} required />
           <InputField label="Teléfono" id="telefono" name="telefono" type="tel" value={formData.telefono} onChange={handleChange} required />
-          <InputField label="Correo electrónico" id="correoElectronico" name="correoElectronico" type="email" value={formData.correoElectronico} onChange={handleChange} required />
+          <InputField label="Correo electrónico" id="email" name="email" type="email" value={formData.correoElectronico} onChange={handleChange} required />
           <InputField label="Estado/Región" id="estadoRegion" name="estadoRegion" value={formData.estadoRegion} onChange={handleChange} required />
           <InputField label="Residencia" id="residencia" name="residencia" value={formData.residencia} onChange={handleChange} required />
           <InputField label="Habitación" id="habitacion" name="habitacion" value={formData.habitacion} onChange={handleChange} required />
