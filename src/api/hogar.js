@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from "./apiClient";
 
 // Usar una URL relativa para aprovechar el proxy configurado en vite.config.js
 const API_URL = '/api/home';
@@ -8,11 +8,11 @@ export const saveHomeConfig = async (data, homeId = null) => {
   try {
     if (homeId) {
       // Actualizar configuración existente
-      const res = await axios.patch(`${API_URL}/${homeId}/config`, data);
+      const res = await apiClient.patch(`${API_URL}/${homeId}/config`, data);
       return res.data;
     } else {
       // Crear nuevo hogar
-      const res = await axios.post(API_URL, data);
+      const res = await apiClient.post(API_URL, data);
       return res.data;
     }
   } catch (error) {
@@ -24,7 +24,7 @@ export const saveHomeConfig = async (data, homeId = null) => {
 // Obtener configuración del hogar por usuario
 export const getHomesByUser = async (userId) => {
   try {
-    const res = await axios.get(`${API_URL}?userId=${userId}`);
+    const res = await apiClient.get(`${API_URL}?userId=${userId}`);
     return res.data;
   } catch (error) {
     console.error("Error en getHomesByUser:", error.response?.data || error.message);
@@ -35,7 +35,7 @@ export const getHomesByUser = async (userId) => {
 // Obtener un hogar por ID
 export const getHomeById = async (homeId) => {
   try {
-    const res = await axios.get(`${API_URL}/${homeId}`);
+    const res = await apiClient.get(`${API_URL}/${homeId}`);
     return res.data;
   } catch (error) {
     console.error("Error en getHomeById:", error.response?.data || error.message);
@@ -47,7 +47,7 @@ export const addUserToSpecificHome = async (homeId, userIdToAdd) => {
   try {
     console.log(`Intentando agregar usuario ${userIdToAdd} al hogar ${homeId}`);
     console.log(`URL de solicitud: ${API_URL}/${homeId}/users`);
-    const res = await axios.post(`${API_URL}/${homeId}/users`, { userIdToAdd });
+    const res = await apiClient.post(`${API_URL}/${homeId}/users`, { userIdToAdd });
     console.log("Respuesta exitosa:", res.data);
     return res.data;
   } catch (error) {
@@ -64,7 +64,7 @@ export const addUserToSpecificHome = async (homeId, userIdToAdd) => {
 
 export const removeUserFromSpecificHome = async (homeId, userIdToRemove) => {
   try {
-    const res = await axios.delete(`${API_URL}/${homeId}/users/${userIdToRemove}`);
+    const res = await apiClient.delete(`${API_URL}/${homeId}/users/${userIdToRemove}`);
     return res.data;
   } catch (error) {
     console.error("Error removing user from home:", error.response?.data || error.message);

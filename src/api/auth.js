@@ -1,12 +1,11 @@
-// src/api/auth.js
-import axios from 'axios';
+import apiClient from './apiClient';
 
 const API_URL = '/api/auth';
 
 // Función para iniciar sesión
 export const loginUser = async (emailOrUsername, contrasena) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, {
+    const response = await apiClient.post(`${API_URL}/login`, {
       emailOrUsername,
       contrasena,
     });
@@ -20,7 +19,7 @@ export const loginUser = async (emailOrUsername, contrasena) => {
 // Función para registrar un nuevo usuario
 export const registerUser = async (formData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, formData);
+    const response = await apiClient.post(`${API_URL}/register`, formData);
     return response.data;
   } catch (error) {
     // Maneja errores

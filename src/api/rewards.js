@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from "./apiClient";
 
 const API_URL = '/api/rewards';
 
@@ -6,7 +6,7 @@ const API_URL = '/api/rewards';
 export const getRewardsByHome = async (homeId) => {
   console.log(`Buscando recompensas para el hogar ${homeId}`);
   try {
-    const res = await axios.get(`${API_URL}/home/${homeId}`);
+    const res = await apiClient.get(`${API_URL}/home/${homeId}`);
     console.log(`Recompensas obtenidas: ${res.data.length}`);
     return res.data;
   } catch (error) {
@@ -22,7 +22,7 @@ export const getRewardsByHome = async (homeId) => {
 export const createReward = async (rewardData) => {
   console.log('Intentando crear recompensa con datos:', rewardData);
   try {
-    const res = await axios.post(API_URL, rewardData, {
+    const res = await apiClient.post(API_URL, rewardData, {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache'
@@ -47,7 +47,7 @@ export const createReward = async (rewardData) => {
 // Canjear recompensa
 export const redeemReward = async (rewardId, userId) => {
   try {
-    const res = await axios.post(`${API_URL}/redeem`, { rewardId, userId });
+    const res = await apiClient.post(`${API_URL}/redeem`, { rewardId, userId });
     return res.data;
   } catch (error) {
     console.error("Error al canjear recompensa:", error.response?.data || error.message);
@@ -58,7 +58,7 @@ export const redeemReward = async (rewardId, userId) => {
 // Eliminar recompensa
 export const deleteReward = async (rewardId) => {
   try {
-    const res = await axios.delete(`${API_URL}/${rewardId}`);
+    const res = await apiClient.delete(`${API_URL}/${rewardId}`);
     return res.data;
   } catch (error) {
     console.error("Error al eliminar recompensa:", error.response?.data || error.message);
@@ -69,7 +69,7 @@ export const deleteReward = async (rewardId) => {
 // Obtener historial de recompensas canjeadas por usuario
 export const getUserRewardHistory = async (userId) => {
   try {
-    const res = await axios.get(`${API_URL}/user/${userId}/history`);
+    const res = await apiClient.get(`${API_URL}/user/${userId}/history`);
     return res.data;
   } catch (error) {
     console.error("Error al obtener historial de recompensas:", error.response?.data || error.message);

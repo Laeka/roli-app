@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from "./apiClient";
 
 // Usamos la ruta directamente, sin prefijo /api ya que el proxy lo manejará
 const API_URL = '/api/users';
@@ -7,7 +7,7 @@ export const getAllUsers = async () => {
   console.log('Llamando a getAllUsers con URL:', API_URL);
   try {
     // Añadimos opciones para mejorar la compatibilidad con el proxy
-    const res = await axios.get(API_URL, {
+    const res = await apiClient.get(API_URL, {
       headers: {
         'Content-Type': 'application/json',
         // Asegurarse de que no haya cache
@@ -33,7 +33,7 @@ export const getAllUsers = async () => {
     // Intentar directamente con la URL del servidor si falla el proxy
     try {
       console.log('Intentando obtener usuarios directamente desde el servidor...');
-      const directRes = await axios.get('http://localhost:5001/users', {
+      const directRes = await apiClient.get('http://localhost:5001/users', {
         headers: { 'Content-Type': 'application/json' }
       });
       console.log('Respuesta directa de usuarios:', directRes.data);
@@ -49,7 +49,7 @@ export const getAllUsers = async () => {
 export const getUserProfile = async (userId) => {
   console.log('Llamando a getUserProfile para userId:', userId);
   try {
-    const res = await axios.get(`${API_URL}/${userId}`, {
+    const res = await apiClient.get(`${API_URL}/${userId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache'
@@ -67,7 +67,7 @@ export const getUserProfile = async (userId) => {
     // Intentar directamente con la URL del servidor si falla el proxy
     try {
       console.log('Intentando obtener perfil de usuario directamente...');
-      const directRes = await axios.get(`http://localhost:5001/users/${userId}`);
+      const directRes = await apiClient.get(`http://localhost:5001/users/${userId}`);
       console.log('Respuesta directa del perfil:', directRes.data);
       return directRes.data;
     } catch (directError) {
