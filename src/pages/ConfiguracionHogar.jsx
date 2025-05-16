@@ -71,6 +71,8 @@ const ConfiguracionHogar = ({ homeId: propHomeId, onConfigSaved }) => {
             setHomeUsers(homeDetails.usuarios);
           } else {
             console.warn("No se recibieron usuarios válidos del hogar");
+            setEspaciosSeleccionados([]);
+            setModulos({ horarioTrabajo: false, normasCasa: false, convivencia: false });
             setHomeUsers([]);
           }
         }
@@ -149,41 +151,46 @@ const ConfiguracionHogar = ({ homeId: propHomeId, onConfigSaved }) => {
     setError(null);
     
     try {
-      // Obtener IDs de todos los usuarios actuales del hogar
-      let usuariosIds = [];
-      
-      if (Array.isArray(homeUsers)) {
-        usuariosIds = homeUsers.map(user => user._id).filter(id => id);
-      }
-      
-      // Asegurar que el usuario actual esté incluido
-      if (userId && !usuariosIds.includes(userId)) {
-        usuariosIds.push(userId);
-      }
-      
-      // Asegurar que espaciosSeleccionados es un array
-      const modulosData = Array.isArray(espaciosSeleccionados) 
-        ? espaciosSeleccionados.map(nombre => ({
-            nombre,
-            estado: 'pendiente'
-          }))
+      const modulosPayload = Array.isArray(espaciosSeleccionados)
+        ? espaciosSeleccionados.map(nombreEspacio => ({
+          nombre: nombreEspacio,
+          estado: 'pendiente'
+        }))
         : [];
-      
-      const data = {
-        nombre: 'Mi hogar',
-        usuarios: usuariosIds,
-        modulos: modulosData,
-        configuracion: modulos
-      };
-      
-      if (!currentHomeId) {
-        console.warn("No hay un ID de hogar válido para guardar la configuración");
-        setError("No se encontró un hogar para guardar la configuración");
-        return;
+
+      let dataToSend;
+      let result;
+
+      if(currentHomeId) {
+        dataToSend = {
+          configuracion: modulos,
+          modulos: modulosPayload,
+        }
+        result = await saveHomeConfig(dataToSend, currentHomeId);
+        alert('¡Configuración del hogar actualizada!');
+      }else {
+        if (!userId) {
+          setError("Error: Usuario no identificado. No se puede crear el hogar.");
+          setLoading(false);
+          return;
+        }
+        const defaultHomeName = 'Mi Hogar';
+        dataToSend = {
+          nombre: defaultHomeName,
+          primerUsuarioId: userId,
+          configuracion: modulos,
+          modulos: modulosPayload,
+        };
+        result = await saveHomeConfig(dataToSend, null);
+        setCurrentHomeId(result._id);
+        
+        const homeDetails = await getHomeById(result._id);
+        if (homeDetails && homeDetails.usuarios) {
+            setHomeUsers(homeDetails.usuarios);
+        }
+        alert('¡Hogar creado y configuración guardada!');
       }
-      
-      await saveHomeConfig(data, currentHomeId);
-      alert('¡Configuración guardada!');
+
       if (onConfigSaved) onConfigSaved();
     } catch (error) {
       console.error("Error al guardar la configuración:", error);
@@ -310,16 +317,18 @@ const ConfiguracionHogar = ({ homeId: propHomeId, onConfigSaved }) => {
                 value={selectedUserId} 
                 onChange={(e) => setSelectedUserId(e.target.value)}
                 className="flex-grow border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-                disabled={availableUsers.length === 0 || addingUser || loadingUsers}
+                disabled={!currentHomeId && availableUsers.length === 0 || addingUser || loadingUsers}
               >
                 <option value="">
                   {loadingUsers 
                     ? "Cargando usuarios..." 
+                    : !currentHomeId
+                    ? "Cree un hogar primero"
                     : availableUsers.length === 0 
                       ? "No hay usuarios disponibles" 
                       : "Seleccione un usuario para agregar"}
                 </option>
-                {Array.isArray(availableUsers) && availableUsers.map(user => (
+                {currentHomeId && Array.isArray(availableUsers) && availableUsers.map(user => (
                   <option key={user._id} value={user._id}>
                     {user.nombre || user.nombres || user.email || user.username || user._id}
                   </option>
